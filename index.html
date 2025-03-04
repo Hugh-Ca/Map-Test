@@ -18,6 +18,14 @@
             display: none;
             pointer-events: none;
         }
+        .info-panel {
+            position: absolute;
+            top: 20px;
+            left: 550px;
+            padding: 10px;
+            border: 1px solid black;
+            background: white;
+        }
     </style>
 </head>
 <body>
@@ -25,27 +33,44 @@
     <input type="text" id="regionInput" placeholder="Enter region name" />
     <button onclick="colorRegion()">Color Region</button>
     
+    <div class="info-panel">
+        <h3>Region Colors</h3>
+        <ul id="regionList"></ul>
+    </div>
+    
     <svg width="500" height="600" viewBox="0 0 500 600">
         <!-- UK Map as background -->
         <image href="https://upload.wikimedia.org/wikipedia/commons/e/e3/Uk_outline_map.png" width="500" height="600" />
         
         <!-- Manually specifying rectangles overlaying the UK map -->
-        <rect class="clickable" x="100" y="100" width="80" height="80" fill="blue" id="Region A"
+        <rect class="clickable" x="100" y="100" width="80" height="80" fill="red" id="Region A"
             onclick="changeColor(this)" onmouseover="showTooltip(event, 'Region A')" onmouseout="hideTooltip()" />
         <rect class="clickable" x="200" y="100" width="100" height="80" fill="red" id="Region B"
             onclick="changeColor(this)" onmouseover="showTooltip(event, 'Region B')" onmouseout="hideTooltip()" />
         <rect class="clickable" x="100" y="200" width="120" height="90" fill="green" id="Region C"
             onclick="changeColor(this)" onmouseover="showTooltip(event, 'Region C')" onmouseout="hideTooltip()" />
-        <rect class="clickable" x="250" y="200" width="90" height="90" fill="purple" id="Region D"
+        <rect class="clickable" x="250" y="200" width="90" height="90" fill="red" id="Region D"
             onclick="changeColor(this)" onmouseover="showTooltip(event, 'Region D')" onmouseout="hideTooltip()" />
     </svg>
 
     <script>
+        function updateRegionList() {
+            let regionList = document.getElementById("regionList");
+            regionList.innerHTML = "";
+            document.querySelectorAll(".clickable").forEach(region => {
+                let li = document.createElement("li");
+                let color = region.getAttribute("fill");
+                let status = color === "green" ? "Yes" : "No";
+                li.textContent = `${region.id}: ${status}`;
+                regionList.appendChild(li);
+            });
+        }
+
         function changeColor(element) {
-            const colors = ["blue", "red", "green", "purple", "orange", "yellow"];
             let currentColor = element.getAttribute("fill");
-            let newColor = colors[(colors.indexOf(currentColor) + 1) % colors.length];
+            let newColor = currentColor === "red" ? "green" : "red";
             element.setAttribute("fill", newColor);
+            updateRegionList();
         }
 
         function showTooltip(event, text) {
@@ -70,6 +95,8 @@
                 alert("Region not found");
             }
         }
+
+        document.addEventListener("DOMContentLoaded", updateRegionList);
     </script>
 </body>
 </html>
